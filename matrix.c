@@ -30,6 +30,11 @@ void set_index(matrix *m, const double value, size_t i, size_t j)
     m->matrix[i*m->rows + j] = value;
 }
 
+/**
+ * Create new matrix with shape (rows, columns)
+ * @param rows The number of rows
+ * @param columns The number of columns
+ */
 matrix* matcreate(const size_t rows, const size_t columns)
 {
     if (rows <= 0 || columns <= 0) {
@@ -48,10 +53,9 @@ matrix* matcreate(const size_t rows, const size_t columns)
 }
 
 /**
- * This function multiples matrices m1 and m2 and put resulting matrix into result.
+ * This function multiples matrices m1 and m2.
  * Matrices should be of shapes (m, k) and (k, n);
  * Resulting matrix has shape (m, n).
- * @param result should be pointer on existing matrix with no allocated memory under field matrix.
  */
 matrix* matmul(const matrix *m1, const matrix *m2)
 {
@@ -76,9 +80,8 @@ matrix* matmul(const matrix *m1, const matrix *m2)
 }
 
 /**
- * This function adds matrices m1 and m2 and put resulting matrix into result.
+ * This function adds matrices m1 and m2.
  * Matrices m1 and m2 should be of the same shape.
- * @param result should be pointer on existing matrix with no allocated memory under field matrix.
  */
 matrix* matadd(const matrix *m1, const matrix *m2)
 {
