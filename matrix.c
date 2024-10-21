@@ -23,10 +23,18 @@ int matmul(const matrix m1, const matrix m2, matrix *const result) {
     if (m1.columns != m2.rows) {
         return WRONG_SHAPE;
     }
-     
-    for (int i = 0; i < m1.rows; ++i) {
-        for (int j = 0; j < m2.columns; ++j) {
-             
+
+    int status = matcreate(m1.rows, m2.columns, result); 
+    if (status != EXIT_SUCCESS) {
+        return status;
+    }
+
+    for (size_t i = 0; i < m1.rows; ++i) {
+        for (size_t j = 0; j < m2.columns; ++j) {
+            result->matrix[i][j] = 0.0f;
+            for (size_t k = 0; k < m1.rows; ++k) {
+                result->matrix[i][j] += m1.matrix[i][k] * m2.matrix[k][j];
+            }
         }
     }
     return EXIT_SUCCESS;
@@ -43,9 +51,21 @@ int matprint(const matrix m) {
 }
 
 int main(void) {
-    matrix m;
-    matcreate(2, 2, &m); 
-    m.matrix[0][0] = 1; m.matrix[0][1] = 2;
-    m.matrix[1][0] = 3; m.matrix[1][1] = 4;
-    matprint(m); 
+    matrix a;
+    matcreate(2, 2, &a); 
+    a.matrix[0][0] = 1; a.matrix[0][1] = 2;
+    a.matrix[1][0] = 3; a.matrix[1][1] = 4;
+    matprint(a); 
+    printf("\n");
+
+    matrix b;
+    matcreate(2, 1, &b); 
+    b.matrix[0][0] = -1;
+    b.matrix[1][0] = 5;
+    matprint(b); 
+    printf("\n");
+
+    matrix c;
+    matmul(a, b, &c);
+    matprint(c);
 }
