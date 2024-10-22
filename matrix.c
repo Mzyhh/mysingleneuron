@@ -124,15 +124,57 @@ matrix* matadd(const matrix *m1, const matrix *m2)
     return result;
 }
 
-//elem determinant(const matrix *m)
-//{
-//    if (m->rows != m->columns) {
-//        set_err(WRONG_SHAPE);
-//        return 0.0;
-//    }
-//
-//    return 0.0;
-//}
+elem determinant(const matrix *m)
+{
+    if (m->rows != m->columns) {
+        set_err(WRONG_SHAPE);
+        return 0.0;
+    }
+
+    matrix *tmp = matcopy(m);
+    //matprint(tmp);
+    //printf("\n");
+    elem det = 1.0;
+    for (size_t j = 0; j < m->columns-1; ++j) {
+        //printf("det=%f, j=%zu\n", det, j);
+        size_t i = j;
+        elem pivot = get_index(tmp, i, j);
+        for (;pivot == 0.0 && i < m->rows;) {
+            pivot = get_index(tmp, ++i, j);
+        }
+
+        if (pivot == 0.0) {
+            return 0.0;
+        }
+        //printf("pivot=%f\n", pivot);
+        if (i != j) {
+            //printf("\trowswap(tmp, %zu, %zu)\n", i, j);
+            rowswap(tmp, i, j);
+            //printf("tmp =\n");
+            //matprint(tmp);
+            //printf("\n");
+            det *= -1;
+        }
+
+        for (size_t k = j+1; k < tmp->rows; ++k) {
+            //printf("\tget_index(tmp, %zu, %zu)\n", k, j);
+            elem aim = get_index(tmp, k, j);
+            elem factor = aim / pivot;
+            for (size_t l = j; l < tmp->columns; ++l) {
+                //printf("\t\tget_index(tmp, %zu, %zu)\n", k, l);
+                elem curr = get_index(tmp, k, l);
+                set_index(tmp, curr - factor*get_index(tmp, j, l), k, l); 
+            }
+        }
+        //printf("tmp =\n");
+        //matprint(tmp);
+        //printf("\n");
+        det *= pivot;
+    }
+    det  *= get_index(tmp, tmp->rows - 1, tmp->columns - 1);
+    matremove(tmp);
+    return det;
+}
 
 int matprint(const matrix *m) 
 {
@@ -147,21 +189,21 @@ int matprint(const matrix *m)
 
 int main(void) 
 {
-    matrix *a = matcreate(2, 2); 
-    set_index(a, 1, 0, 0);
-    set_index(a, 2, 0, 1);
-    set_index(a, 3, 1, 0);
-    set_index(a, 4, 1, 1);
+//    matrix *a = matcreate(2, 2); 
+//    set_index(a, 3, 0, 0);
+//    set_index(a, 6, 0, 1);
+//    set_index(a, 4, 1, 0);
+//    set_index(a, 12, 1, 1);
 //    matprint(a); 
 //    printf("\n");
-
-    matrix *b = matcreate(4, 3); 
-    set_index(b, -1, 0, 0);
-    set_index(b, 5, 0, 1);
-    set_index(b, -3, 0, 2);
-    set_index(b, 0, 1, 0);
-    set_index(b, 10, 1, 1);
-    set_index(b, 110, 1, 2);
+    
+    matrix *b = matcreate(3, 3); 
+    set_index(b, 1, 1, 0);
+    set_index(b, 2, 0, 1);
+    set_index(b, 3, 2, 2);
+    matprint(b); 
+    printf("\n");
+    printf("DET=%f\n", determinant(b));
     matprint(b); 
     printf("\n");
 
