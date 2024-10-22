@@ -30,5 +30,6 @@ matrix* matadd(const matrix *m1, const matrix *m2);
 int matprint(const matrix *m);
 
 void rowswap(matrix *m, const size_t row1, const size_t row2);
+elem determinant(const matrix *m);
 
 #endif //_MATRIX_H
