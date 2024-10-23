@@ -131,13 +131,9 @@ matrix matadd(const matrix m1, const matrix m2)
         return result;
     }
     
-    result = matcreate(m1.rows, m1.columns);
+    result = matcopy(m1);
     PROPAGATE_ERROR(result);
-    for (size_t i = 0; i < result.rows; ++i) {
-        for (size_t j = 0; j < result.columns; ++j) {
-            seti(result, geti(m1, i, j) + geti(m2, i, j), i, j);
-        }
-    }
+    mataddassign(result, m2);
 
     return result;
 }
@@ -155,6 +151,30 @@ void mataddassign(matrix m1, const matrix m2)
             seti(m1, geti(m1, i, j) + geti(m2, i, j), i, j);
         }
     }
+}
+
+matrix matmap(const matrix m, elem (*f)(elem))
+{
+    matrix result = matcopy(m);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < result.rows; ++i) {
+        for (size_t j = 0; j < result.columns; ++j) {
+            seti(result, f(geti(result, i, j)), i, j);
+        }
+    }
+    return result;
+}
+
+matrix matmulnum(const matrix m, const double factor)
+{
+    matrix result = matcopy(m);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < result.rows; ++i) {
+        for (size_t j = 0; j < result.columns; ++j) {
+            seti(result, factor*geti(result, i, j), i, j);
+        }
+    }
+    return result;
 }
 
 elem determinant(const matrix m)
@@ -227,6 +247,11 @@ int main(void)
     matprint(b); 
     printf("\n");
     printf("DET=%f\n", determinant(b));
+    matrix c = matmulnum(b, 2);
+    matprint(c); 
+    printf("\n");
+
+    mataddassign(b, c);
     matprint(b); 
     printf("\n");
 
