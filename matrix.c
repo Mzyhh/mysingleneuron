@@ -37,6 +37,10 @@ void rowswap(matrix m, const size_t row1, const size_t row2)
         return;
     }
     elem* buffer = (elem*)calloc(m.columns, sizeof(elem));
+    if (!buffer) {
+        set_err(ROW_SWAP_ERROR);
+        return;
+    }
     elem* ptr1 = m.matrix + row1*m.columns, *ptr2 = m.matrix + row2*m.columns;
     const size_t size = m.columns*sizeof(elem);
     memcpy(buffer, ptr1, size);
@@ -115,6 +119,8 @@ matrix matmul(const matrix m1, const matrix m2)
 /**
  * This function adds matrices m1 and m2.
  * Matrices m1 and m2 should be of the same shape.
+ * @param m1 left addition operand.
+ * @param m2 right addition operand.
  */
 matrix matadd(const matrix m1, const matrix m2)
 {
@@ -134,6 +140,21 @@ matrix matadd(const matrix m1, const matrix m2)
     }
 
     return result;
+}
+
+/**
+ * This function adds matrices m1 and m2 and put result into m1.
+ * Matrices m1 and m2 should be of the same shape.
+ * @param m1 left addition operand and destination.
+ * @param m2 right addition operand.
+ */
+void mataddassign(matrix m1, const matrix m2)
+{
+    for (size_t i = 0; i < m1.rows; ++i) {
+        for (size_t j = 0; j < m1.columns; ++j) {
+            seti(m1, geti(m1, i, j) + geti(m2, i, j), i, j);
+        }
+    }
 }
 
 elem determinant(const matrix m)

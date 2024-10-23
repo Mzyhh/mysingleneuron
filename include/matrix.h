@@ -9,6 +9,7 @@
 #define WRONG_SHAPE 1052
 #define OUT_OF_BOUNDARIES 1069
 #define ALLOCATION_ERROR 666
+#define ROW_SWAP_ERROR 777
 
 #define PROPAGATE_ERROR(return_value) if (materrorno != EXIT_SUCCESS) return return_value;
 
@@ -31,6 +32,7 @@ void matremove(matrix m);
 matrix matcopy(const matrix source);
 matrix matmul(const matrix m1, const matrix m2);
 matrix matadd(const matrix m1, const matrix m2);
+void mataddassign(matrix m1, const matrix m2);
 int matprint(const matrix m);
 
 void rowswap(matrix m, const size_t row1, const size_t row2);
