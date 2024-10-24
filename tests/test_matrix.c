@@ -1,7 +1,4 @@
-#include <CUnit/Basic.h>
-#include <CUnit/CUnit.h>
-
-#include "../include/matrix.h"
+#include "test_matrix.h"
 
 extern int materrorno;
 matrix i2x2, m2x2, m2x3, zeros4x4;
@@ -38,10 +35,10 @@ int init_suite(void)
 
 int clean_suite(void)
 {
-    matremove(i2x2);
-    matremove(m2x2);
-    matremove(m2x3);
-    matremove(zeros4x4);
+    matremove(&i2x2);
+    matremove(&m2x2);
+    matremove(&m2x3);
+    matremove(&zeros4x4);
     return get_err();
 }
 
@@ -129,8 +126,8 @@ void test_matadd(void)
     seti(true_sum, -1, 1, 0);
     seti(true_sum, 2, 1, 1);
     CU_ASSERT_TRUE(mateq(sum, true_sum));
-    matremove(sum);
-    matremove(true_sum);
+    matremove(&sum);
+    matremove(&true_sum);
 }
 
 int main()
@@ -145,7 +142,12 @@ int main()
     CU_add_test(suite, "test error codes of geti()", test_geti_errors);
     CU_add_test(suite, "test of mateq()", test_mateq);
     CU_add_test(suite, "test of matadd()", test_matadd);
+
+    int code = create_singleton_suite(); 
+    if (code != CUE_SUCCESS) {
+        return code; 
+    }
     CU_basic_run_tests();
     CU_cleanup_registry();
-    return EXIT_SUCCESS;
+    return CU_get_error();
 }

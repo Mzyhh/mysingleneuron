@@ -72,12 +72,12 @@ matrix matcreate(const size_t rows, const size_t columns)
     return result;
 }
 
-void matremove(matrix m)
+void matremove(matrix *m)
 {
-    free(m.matrix);
-    m.matrix = NULL;
-    m.rows = 0;
-    m.columns = 0;
+    free(m->matrix);
+    m->matrix = NULL;
+    m->rows = 0;
+    m->columns = 0;
 }
 
 matrix matcopy(const matrix source)
@@ -230,7 +230,7 @@ elem matdet(const matrix m)
         det *= pivot;
     }
     det  *= geti(tmp, tmp.rows - 1, tmp.columns - 1);
-    matremove(tmp);
+    matremove(&tmp);
     return det;
 }
 
