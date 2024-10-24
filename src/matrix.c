@@ -1,4 +1,4 @@
-#include "include/matrix.h"
+#include "matrix.h"
 
 extern int materrorno;
 extern int errno;
@@ -243,38 +243,4 @@ int matprint(const matrix m)
         printf("\n");
     }
     return EXIT_SUCCESS;
-}
-
-
-
-int main1(void) 
-{
-//    matrix *a = matcreate(2, 2); 
-//    set_index(a, 3, 0, 0);
-//    set_index(a, 6, 0, 1);
-//    set_index(a, 4, 1, 0);
-//    set_index(a, 12, 1, 1);
-//    matprint(a); 
-//    printf("\n");
-    
-    matrix b = matcreate(3, 3); 
-    seti(b, 1, 1, 0);
-    seti(b, 2, 0, 1);
-    seti(b, 3, 2, 2);
-    matprint(b); 
-    printf("\n");
-    printf("DET=%f\n", matdet(b));
-    matrix c = matmulnum(b, 2);
-    matprint(c); 
-    printf("\n");
-
-    mataddassign(b, c);
-    matprint(b); 
-    printf("\n");
-
-//    matrix *c = matadd(a, b);
-//    matprint(c); 
-//    printf("\n");
-
-    return materrorno;
 }

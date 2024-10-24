@@ -1,2 +1,3 @@
-matrix
+run_tests
 tests/test_matrix
+obj/
