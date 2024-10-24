@@ -1,6 +1,6 @@
 #include "include/matrix.h"
 
-static int materrorno = EXIT_SUCCESS;
+extern int materrorno;
 extern int errno;
 
 void set_err(int code)
@@ -18,7 +18,7 @@ int get_err()
 elem geti(const matrix m, size_t i, size_t j)
 {
     if (i < 0 || i >= m.rows || j < 0 || j >= m.columns) {
-        set_err(OUT_OF_BOUNDARIES);
+        set_err(MAT_OUT_OF_BOUNDARIES);
     }
     return m.matrix[i*m.columns + j];
 }
@@ -26,7 +26,7 @@ elem geti(const matrix m, size_t i, size_t j)
 void seti(matrix m, const elem value, size_t i, size_t j)
 {
     if (i < 0 || i >= m.rows || j < 0 || j >= m.columns) {
-        set_err(OUT_OF_BOUNDARIES);
+        set_err(MAT_OUT_OF_BOUNDARIES);
     }
     m.matrix[i*m.columns + j] = value;
 }
@@ -38,7 +38,7 @@ void rowswap(matrix m, const size_t row1, const size_t row2)
     }
     elem* buffer = (elem*)calloc(m.columns, sizeof(elem));
     if (!buffer) {
-        set_err(ROW_SWAP_ERROR);
+        set_err(MAT_ROWSWAP_ERROR);
         return;
     }
     elem* ptr1 = m.matrix + row1*m.columns, *ptr2 = m.matrix + row2*m.columns;
@@ -57,7 +57,7 @@ void rowswap(matrix m, const size_t row1, const size_t row2)
 matrix matcreate(const size_t rows, const size_t columns)
 {
     if (rows <= 0 || columns <= 0) {
-        set_err(WRONG_SHAPE);
+        set_err(MAT_WRONG_SHAPE);
     }
     matrix result;
 
@@ -65,7 +65,7 @@ matrix matcreate(const size_t rows, const size_t columns)
     result.columns = columns;
     result.matrix = (elem*)calloc(rows*columns, sizeof(elem*));
     if (!result.matrix) {
-        set_err(ALLOCATION_ERROR);
+        set_err(MAT_ALLOCATION_ERROR);
         result.columns = 0;
         result.rows = 0;
     }
@@ -88,6 +88,23 @@ matrix matcopy(const matrix source)
     return dest;
 }
 
+int mateq(const matrix a, const matrix b)
+{
+    if (a.rows != b.rows || a.columns != b.columns) {
+        return 0; 
+    }
+
+    for (size_t i = 0; i < a.rows; ++i) {
+        for (size_t j = 0; j < a.rows; ++j) {
+            if (geti(a, i, j) != geti(b, i, j)) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
 /**
  * This function multiples matrices m1 and m2.
  * Matrices should be of shapes (m, k) and (k, n);
@@ -98,7 +115,7 @@ matrix matmul(const matrix m1, const matrix m2)
     matrix result;
     result.matrix = NULL;
     if (m1.columns != m2.rows) {
-        set_err(WRONG_SHAPE);
+        set_err(MAT_WRONG_SHAPE);
         return result;
     }
 
@@ -127,7 +144,7 @@ matrix matadd(const matrix m1, const matrix m2)
     matrix result;
     result.matrix = NULL;
     if (m1.rows != m2.rows || m1.columns != m2.columns) {
-        set_err(WRONG_SHAPE);
+        set_err(MAT_WRONG_SHAPE);
         return result;
     }
     
@@ -177,10 +194,10 @@ matrix matmulnum(const matrix m, const double factor)
     return result;
 }
 
-elem determinant(const matrix m)
+elem matdet(const matrix m)
 {
     if (m.rows != m.columns) {
-        set_err(WRONG_SHAPE);
+        set_err(MAT_WRONG_SHAPE);
         return 0.0;
     }
 
@@ -190,7 +207,7 @@ elem determinant(const matrix m)
     for (size_t j = 0; j < m.columns-1; ++j) {
         size_t i = j;
         elem pivot = geti(tmp, i, j);
-        for (;pivot == 0.0 && i < m.rows;) {
+        for (;pivot == 0.0 && i < m.rows-1;) {
             pivot = geti(tmp, ++i, j);
         }
 
@@ -230,7 +247,7 @@ int matprint(const matrix m)
 
 
 
-int main(void) 
+int main1(void) 
 {
 //    matrix *a = matcreate(2, 2); 
 //    set_index(a, 3, 0, 0);
@@ -246,7 +263,7 @@ int main(void)
     seti(b, 3, 2, 2);
     matprint(b); 
     printf("\n");
-    printf("DET=%f\n", determinant(b));
+    printf("DET=%f\n", matdet(b));
     matrix c = matmulnum(b, 2);
     matprint(c); 
     printf("\n");
