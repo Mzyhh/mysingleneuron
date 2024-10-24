@@ -1,6 +1,5 @@
 TARGET_TEST = tests
 TARGET_TEST_FILE = run_tests
-TARGET_PLAYGROUND = playground
 CC = gcc
 
 PREF_SRC = ./src/
@@ -11,9 +10,6 @@ SRC = $(wildcard $(PREF_SRC)*.c)
 TEST_SRC = $(wildcard $(PREF_TEST)*c)
 OBJ = $(patsubst $(PREF_SRC)%.c, $(PREF_OBJ)%.o, $(SRC))
 TEST_OBJ = $(patsubst $(PREF_TEST)%.c, $(PREF_OBJ)%.o, $(TEST_SRC))
-
-$(TARGET_PLAYGROUND) : $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET_PLAYGROUND)
 
 $(TARGET_TEST) : $(OBJ) $(TEST_OBJ)
 	$(CC) $(OBJ) $(TEST_OBJ) -o $(TARGET_TEST_FILE) -lcunit -lm
