@@ -186,12 +186,17 @@ matrix matmulnum(const matrix m, const double factor)
 {
     matrix result = matcopy(m);
     PROPAGATE_ERROR(result);
-    for (size_t i = 0; i < result.rows; ++i) {
-        for (size_t j = 0; j < result.columns; ++j) {
-            seti(result, factor*geti(result, i, j), i, j);
+    matmulnumassign(result, factor);
+    return result;
+}
+
+void matmulnumassign(matrix m, const double factor)
+{
+    for (size_t i = 0; i < m.rows; ++i) {
+        for (size_t j = 0; j < m.columns; ++j) {
+            seti(m, factor*geti(m, i, j), i, j);
         }
     }
-    return result;
 }
 
 elem matdet(const matrix m)
