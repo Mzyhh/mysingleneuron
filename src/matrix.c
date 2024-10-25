@@ -170,16 +170,25 @@ void mataddassign(matrix m1, const matrix m2)
     }
 }
 
+/** This function map function f to each element of matrix m.
+ * @param f Function: elem -> elem
+ * @param m source matrix, it is not changed
+ */
 matrix matmap(const matrix m, elem (*f)(elem))
 {
     matrix result = matcopy(m);
     PROPAGATE_ERROR(result);
-    for (size_t i = 0; i < result.rows; ++i) {
-        for (size_t j = 0; j < result.columns; ++j) {
-            seti(result, f(geti(result, i, j)), i, j);
+    matmapassign(result, f);
+    return result;
+}
+
+void matmapassign(matrix m, elem (*f)(elem))
+{
+    for (size_t i = 0; i < m.rows; ++i) {
+        for (size_t j = 0; j < m.columns; ++j) {
+            seti(m, f(geti(m, i, j)), i, j);
         }
     }
-    return result;
 }
 
 matrix matmulnum(const matrix m, const double factor)

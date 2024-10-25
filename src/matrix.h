@@ -37,6 +37,7 @@ matrix matadd(const matrix m1, const matrix m2);
 void mataddassign(matrix m1, const matrix m2);
 int matprint(const matrix m);
 matrix matmap(const matrix m, elem (*f)(elem));
+void matmapassign(matrix m, elem (*f)(elem));
 matrix matmulnum(const matrix m, const double factor);
 void matmulnumassign(matrix m, const double factor);
 
