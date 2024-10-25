@@ -3,11 +3,19 @@
 extern int materrorno;
 extern int errno;
 
+/**
+ * Function `set_err` sets globally error code variable of module `matrix`
+ * to value `code`.
+ */
 void set_err(int code)
 {
     materrorno = code;
 }
 
+/**
+ * Function `get_err` return error code of module `matrix` and set
+ * it globally to `EXIT_SUCCESS`
+ */
 int get_err()
 {
     int tmp = materrorno;
@@ -15,6 +23,9 @@ int get_err()
     return tmp;
 }
 
+/**Function `geti` return element of matrix that is located
+ * on row `i` and column `j`
+ */
 elem geti(const matrix m, size_t i, size_t j)
 {
     if (i < 0 || i >= m.rows || j < 0 || j >= m.columns) {
@@ -23,6 +34,9 @@ elem geti(const matrix m, size_t i, size_t j)
     return m.matrix[i*m.columns + j];
 }
 
+/**
+ * Function `seti` sets `value` to matrix element on row `i` and column `j`.
+ */
 void seti(matrix m, const elem value, size_t i, size_t j)
 {
     if (i < 0 || i >= m.rows || j < 0 || j >= m.columns) {
@@ -31,6 +45,9 @@ void seti(matrix m, const elem value, size_t i, size_t j)
     m.matrix[i*m.columns + j] = value;
 }
 
+/**
+ * Function `rowswap` transposes rows with indices `row1` and `row2`
+ */
 void rowswap(matrix m, const size_t row1, const size_t row2)
 {
     if (row1 == row2) {
@@ -72,6 +89,8 @@ matrix matcreate(const size_t rows, const size_t columns)
     return result;
 }
 
+/** This function make memory allocated for m->matrix free and set all matrix fields to 0.
+ */
 void matremove(matrix *m)
 {
     free(m->matrix);
@@ -80,6 +99,8 @@ void matremove(matrix *m)
     m->columns = 0;
 }
 
+/**Create new matrix that is equal to source matrix
+ */
 matrix matcopy(const matrix source)
 {
     matrix dest = matcreate(source.rows, source.columns);
@@ -88,6 +109,8 @@ matrix matcopy(const matrix source)
     return dest;
 }
 
+/**Analogue of == for matrices.
+ */
 int mateq(const matrix a, const matrix b)
 {
     if (a.rows != b.rows || a.columns != b.columns) {
@@ -182,6 +205,10 @@ matrix matmap(const matrix m, elem (*f)(elem))
     return result;
 }
 
+/** This function map function f to each element of matrix m.
+ * @param f Function: elem -> elem
+ * @param m Source and resulting matrix 
+ */
 void matmapassign(matrix m, elem (*f)(elem))
 {
     for (size_t i = 0; i < m.rows; ++i) {
@@ -191,6 +218,8 @@ void matmapassign(matrix m, elem (*f)(elem))
     }
 }
 
+/**Return matrix that is matrix m with every element multiplyed by factor.
+ */
 matrix matmulnum(const matrix m, const double factor)
 {
     matrix result = matcopy(m);
@@ -199,6 +228,8 @@ matrix matmulnum(const matrix m, const double factor)
     return result;
 }
 
+/**Multiply every matrix m's element by factor.
+ */
 void matmulnumassign(matrix m, const double factor)
 {
     for (size_t i = 0; i < m.rows; ++i) {
@@ -208,6 +239,9 @@ void matmulnumassign(matrix m, const double factor)
     }
 }
 
+/**Function `matdet` calculates determinant of matrix m,
+ * using triangular view of matrix.
+ */
 elem matdet(const matrix m)
 {
     if (m.rows != m.columns) {
