@@ -292,3 +292,31 @@ int matprint(const matrix m)
     }
     return EXIT_SUCCESS;
 }
+
+matrix matadamar(const matrix a, const matrix b)
+{
+    matrix result = {0};
+    if (a.rows != b. rows || a.columns != b.columns) {
+        set_err(MAT_WRONG_SHAPE);
+        return result;
+    }
+    result = matcreate(a.rows, a.columns);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < b.rows; ++i) {
+        for (size_t j = 0; j < b.columns; ++j) {
+            seti(result, geti(a, i, j) + geti(b, i, j), i, j);
+        }
+    }
+    return result;
+}
+
+matrix mattranspose(const matrix m)
+{
+    matrix result = matcreate(m.rows, m.columns);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < m.rows; ++i) {
+        for (size_t j = 0; j < m.columns; ++j) {
+            seti(result, geti(m, i, j), j , i);
+        }
+    }
+}

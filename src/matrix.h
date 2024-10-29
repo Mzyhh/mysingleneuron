@@ -40,6 +40,8 @@ matrix matmap(const matrix m, elem (*f)(elem));
 void matmapassign(matrix m, elem (*f)(elem));
 matrix matmulnum(const matrix m, const double factor);
 void matmulnumassign(matrix m, const double factor);
+matrix matadamar(const matrix a, const matrix b);
+matrix mattranspose(const matrix m);
 
 int mateq(const matrix a, const matrix b);
 
