@@ -45,6 +45,7 @@ matrix matadamar(const matrix a, const matrix b);
 matrix mattranspose(const matrix m);
 
 matrix mathorjoin(const matrix left, const matrix right);
+matrix matverjoin(const matrix up, const matrix down);
 
 int mateq(const matrix a, const matrix b);
 
