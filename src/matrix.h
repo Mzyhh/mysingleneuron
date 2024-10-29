@@ -6,6 +6,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "globals.h"
+
 #define MAT_WRONG_SHAPE 1052
 #define MAT_OUT_OF_BOUNDARIES 1069
 #define MAT_ALLOCATION_ERROR 666
@@ -15,7 +17,7 @@ static int materrorno = EXIT_SUCCESS;
 
 #define PROPAGATE_ERROR(return_value) if (materrorno != EXIT_SUCCESS) return return_value;
 
-typedef double elem;
+
 
 typedef struct {
     elem *matrix;
