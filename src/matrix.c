@@ -197,7 +197,7 @@ void mataddassign(matrix m1, const matrix m2)
  * @param f Function: elem -> elem
  * @param m source matrix, it is not changed
  */
-matrix matmap(const matrix m, elem (*f)(elem))
+matrix matmap(const matrix m, elem (*f)(elem, size_t, size_t))
 {
     matrix result = matcopy(m);
     PROPAGATE_ERROR(result);
@@ -209,11 +209,11 @@ matrix matmap(const matrix m, elem (*f)(elem))
  * @param f Function: elem -> elem
  * @param m Source and resulting matrix 
  */
-void matmapassign(matrix m, elem (*f)(elem))
+void matmapassign(matrix m, elem (*f)(elem, size_t, size_t))
 {
     for (size_t i = 0; i < m.rows; ++i) {
         for (size_t j = 0; j < m.columns; ++j) {
-            seti(m, f(geti(m, i, j)), i, j);
+            seti(m, f(geti(m, i, j), i, j), i, j);
         }
     }
 }
@@ -319,4 +319,19 @@ matrix mattranspose(const matrix m)
             seti(result, geti(m, i, j), j , i);
         }
     }
+}
+
+matrix matidentity(const size_t size)
+{
+    matrix result = matcreate(size, size);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < size; ++i) {
+        seti(result, 1, i, i);
+    }
+    return result;
+}
+
+matrix mathorjoin(const matrix left, const matrix right)
+{
+    
 }

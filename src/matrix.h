@@ -30,18 +30,21 @@ void set_err(int code);
 int get_err();
 
 matrix matcreate(const size_t rows, const size_t columns);
+matrix matidentity(const size_t size);
 void matremove(matrix *m);
 matrix matcopy(const matrix source);
 matrix matmul(const matrix m1, const matrix m2);
 matrix matadd(const matrix m1, const matrix m2);
 void mataddassign(matrix m1, const matrix m2);
 int matprint(const matrix m);
-matrix matmap(const matrix m, elem (*f)(elem));
-void matmapassign(matrix m, elem (*f)(elem));
+matrix matmap(const matrix m, elem (*f)(elem, size_t, size_t));
+void matmapassign(matrix m, elem (*f)(elem, size_t, size_t));
 matrix matmulnum(const matrix m, const double factor);
 void matmulnumassign(matrix m, const double factor);
 matrix matadamar(const matrix a, const matrix b);
 matrix mattranspose(const matrix m);
+
+matrix mathorjoin(const matrix left, const matrix right);
 
 int mateq(const matrix a, const matrix b);
 
