@@ -333,5 +333,44 @@ matrix matidentity(const size_t size)
 
 matrix mathorjoin(const matrix left, const matrix right)
 {
-    
+    matrix result = {0};
+    if (left.rows != right.rows) {
+        set_err(MAT_WRONG_SHAPE);
+        return result;
+    }
+    result = matcreate(left.rows, left.columns + right.columns);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < left.rows; ++i) {
+        for (size_t j = 0; j < left.columns; ++j) {
+            seti(result, geti(left, i, j), i, j);
+        }
+    }
+    for (size_t i = 0; i < right.rows; ++i) {
+        for (size_t j = 0; j < right.columns; ++j) {
+            seti(result, geti(right, i, j), i, j + left.columns);
+        }
+    }
+    return result;
+}
+
+matrix matverjoin(const matrix up, const matrix down)
+{
+    matrix result = {0};
+    if (up.columns != down.columns) {
+        set_err(MAT_WRONG_SHAPE);
+        return result;
+    }
+    result = matcreate(up.rows + down.rows, up.columns);
+    PROPAGATE_ERROR(result);
+    for (size_t i = 0; i < up.rows; ++i) {
+        for (size_t j = 0; j < up.columns; ++j) {
+            seti(result, geti(up, i, j), i, j);
+        }
+    }
+    for (size_t i = 0; i < down.rows; ++i) {
+        for (size_t j = 0; j < down.columns; ++j) {
+            seti(result, geti(down, i, j), i + up.rows, j);
+        }
+    }
+    return result;
 }
