@@ -48,6 +48,7 @@ matrix mattranspose(const matrix m);
 
 matrix mathorjoin(const matrix left, const matrix right);
 matrix matverjoin(const matrix up, const matrix down);
+void matinsert(const matrix source, matrix destination, size_t row, size_t col);
 
 int mateq(const matrix a, const matrix b);
 

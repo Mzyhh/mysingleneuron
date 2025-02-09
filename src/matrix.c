@@ -73,10 +73,14 @@ void rowswap(matrix m, const size_t row1, const size_t row2)
  */
 matrix matcreate(const size_t rows, const size_t columns)
 {
+    matrix result;
     if (rows <= 0 || columns <= 0) {
         set_err(MAT_WRONG_SHAPE);
+        result.matrix = NULL;
+        result.columns = 0;
+        result.rows = 0;
+        return result;
     }
-    matrix result;
 
     result.rows = rows;
     result.columns = columns;
@@ -373,4 +377,19 @@ matrix matverjoin(const matrix up, const matrix down)
         }
     }
     return result;
+}
+
+
+void matinsert(const matrix source, matrix destination, size_t row, size_t col) {
+    if (source.columns > destination.columns - col || 
+            source.rows > destination.rows - row){
+        set_err(MAT_WRONG_SHAPE);
+        return;
+    }
+    for (size_t i = row; i < source.rows; ++i) {
+        for (size_t j = col; j < source.columns; ++j) {
+            seti(destination, geti(source, i, j), i, j); 
+        }
+    }
+    PROPAGATE_ERROR();
 }
