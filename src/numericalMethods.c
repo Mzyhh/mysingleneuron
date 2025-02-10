@@ -57,7 +57,7 @@ array midpointMethod(size_t order, double *iv, double(*F[])(double, double*),
     return result;
 }
 
-// TODO: there is might be optimization, because F(t_i, X_i) is calculated twice
+// TODO: here might be optimization, because F(t_i, X_i) is calculated twice
 array trapezoidMethod(size_t order, double *iv, double(*F[])(double, double*),
       double t0, double T, double h) { 
     size_t dots = (size_t)ceil((T - t0)/h);
