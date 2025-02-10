@@ -5,11 +5,10 @@
 #include "numericalMethods.h"
 
 
-array explicitEulerMethod(size_t order, double h, double t0,
-        double T, double *iv, double(*F[])(double, double*))
-{
+array explicitEulerMethod(size_t order, double *iv, double(*F[])(double, double*),
+      double t0, double T, double h) {
     size_t dots = (size_t)ceil((T - t0)/h);
-    size_t N = (order + 1)*dots+1;
+    size_t N = (order + 1)*(dots+1);
     double* solution = (double*)malloc(sizeof(double)*N); 
     for (size_t i = 1; i < order + 1; ++i)
         solution[i] = iv[i-1];
@@ -30,10 +29,19 @@ array explicitEulerMethod(size_t order, double h, double t0,
     return result;
 }
 
-array midpointMethod(size_t order, double h, double t0,
-        double T, double *iv, double(*F[])(double, double*)) {
+//varray midpointMethodV(size_t order, double *iv, double(*F[])(double, double*),
+//        double t0, double T, double h) {
+//    size_t dots = (size_t)ceil((T - t0)/h);
+//    size_t N = (order + 1)*dots+1;
+//    varray result;
+//    result.elemSize = sizeof(double*);
+//    result.length = 
+//
+//}
+array midpointMethod(size_t order, double *iv, double(*F[])(double, double*),
+      double t0, double T, double h) { 
     size_t dots = (size_t)ceil((T - t0)/h);
-    size_t N = (order + 1)*dots+1;
+    size_t N = (order + 1)*(dots+1);
     double* solution = (double*)malloc(sizeof(double)*N); 
     for (size_t i = 1; i < order + 1; ++i)
         solution[i] = iv[i-1];
@@ -51,7 +59,7 @@ array midpointMethod(size_t order, double h, double t0,
             solution[next+j] = solution[curr+j] + h*(*F[j-1])(t+0.5*h, temp);
         }
     }
-    //free(temp);
+    free(temp);
     solution[next] = t;
 
     array result = {solution, N}; 
@@ -81,8 +89,8 @@ int main() {
     F[0] = &f1;
     F[1] = &f2;
     double iv[2] = {1, 1};
-//    array euler_sol = explicitEulerMethod(order, 0.01, 0, 1, iv, F);
-    array midpoint_sol = midpointMethod(order, 0.01, 0, 1, iv, F);
+    array euler_sol = explicitEulerMethod(order, iv, F, 0, 1, 0.05);
+    array midpoint_sol = midpointMethod(order, iv, F, 0, 1, 0.05);
 
     FILE *gp = popen("gnuplot -persist", "w");
     FILE *euler_x = fopen("euler_x.dat", "w");
@@ -93,15 +101,16 @@ int main() {
     for (int i = 0; i < midpoint_sol.length; i += 3) {
         double t = midpoint_sol.data[i];
         printf("%f %f\n", t, midpoint_sol.data[i+1]);
-        //fprintf(euler_x, "%f %f\n", t, euler_sol.data[i+1]);
+        fprintf(euler_x, "%f %f\n", t, euler_sol.data[i+1]);
         //fprintf(output_y, "%f %f\n", t, solution.data[i+2]);
-        //fprintf(real_x, "%f %f\n", t, x(t)); 
+        fprintf(real_x, "%f %f\n", t, x(t)); 
         //fprintf(real_y, "%f %f\n", t, y(t)); 
-        //fprintf(midpoint_x, "%f %f\n", t, midpoint_sol.data[i+1]);
+        fprintf(midpoint_x, "%f %f\n", t, midpoint_sol.data[i+1]);
     }
-    //fprintf(gp, "plot 'midpoint_x.dat' with lines\n");
-    //fflush(gp);
-    //free(euler_sol.data);
+    fprintf(gp, "plot 'midpoint_x.dat' with lines, 'real_x.dat' with lines,\
+                 'euler_x.dat' with lines\n");
+    fflush(gp);
+    free(euler_sol.data);
     free(midpoint_sol.data);
     return EXIT_SUCCESS;
 }

@@ -6,5 +6,14 @@ typedef struct {
     size_t length;
 } array;
 
-array explicitEulerMethod(size_t order, double h, double t0,
-        double T, double *iv, double(*F[])(double, double*));
+typedef struct {
+    void *data;
+    size_t elemSize;
+    size_t length;
+} varray;
+
+array explicitEulerMethod(size_t order, double *iv, double(*F[])(double, double*),
+      double t0, double T, double h);
+
+array midpointMethod(size_t order, double *iv, double(*F[])(double, double*),
+      double t0, double T, double h);
