@@ -7,4 +7,4 @@ typedef struct {
 } array;
 
 array explicitEulerMethod(size_t order, double h, double t0,
-        double T, double *iv, double(*F[])(double*));
+        double T, double *iv, double(*F[])(double, double*));

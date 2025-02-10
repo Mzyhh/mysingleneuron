@@ -2,3 +2,5 @@ run_tests
 tests/test_matrix
 obj/
 .vscode/
+*.dat
+*.out
