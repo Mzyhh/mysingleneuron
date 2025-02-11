@@ -12,8 +12,16 @@ typedef struct {
     size_t length;
 } varray;
 
-array explicitEulerMethod(size_t order, double *iv, double(*F[])(double, double*),
-      double t0, double T, double h);
+typedef struct {
+    size_t order;
+    double *initial_values;
+    double t0;
+    double(**F)(double, double*);
+} CauchyProblem;
 
-array midpointMethod(size_t order, double *iv, double(*F[])(double, double*),
-      double t0, double T, double h);
+array explicitEulerMethod(CauchyProblem ivp, double T, double h);
+
+array midpointMethod(CauchyProblem ivp, double T, double h);
+
+array rungeKuttaMethod(CauchyProblem ivp, double T, double h);
+
