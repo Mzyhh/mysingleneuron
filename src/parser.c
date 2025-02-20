@@ -28,8 +28,9 @@ Token *getToken(struct stringstream *ss) {
     } else if (isdigit(ss->data[start])) {
         t = (Token*)malloc(sizeof(Token));
         t->type = Num;
-        sscanf(ss->data + start, "%lf", &t->number);
-        ss->offset += ceil(log10(t->number + 1));
+        t->number = atof(ss->data + start);
+        while(isdigit(ss->data[ss->offset]) || ss->data[ss->offset] == '.') 
+            ss->offset++;
          
     } else if (ss->data[start] == '(') {
         t = (Token*)malloc(sizeof(Token));
