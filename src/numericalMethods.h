@@ -1,5 +1,8 @@
 #include "matrix.h"
 
+#ifndef __NUMERICAL_METHODS_H__
+#define __NUMERICAL_METHODS_H__
+
 
 typedef struct {
     double *data;
@@ -19,3 +22,4 @@ array midpointMethod(CauchyProblem ivp, double T, double h);
 
 array rungeKuttaMethod(CauchyProblem ivp, double T, double h);
 
+#endif // __NUMERICAL_METHODS_H__

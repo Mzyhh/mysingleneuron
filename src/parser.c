@@ -1,27 +1,8 @@
 #include <stdio.h>
 #include <ctype.h>
-#include <stdlib.h>
 #include <string.h>
 
-#define INIT_SS(name, str) struct stringstream name;\
-                      stringstreamInit(&name, str);
-
-typedef struct stringstream {
-    char* data;
-    size_t offset;
-    int (*isempty)(struct stringstream*);
-}stringstream;
-
-int stringstreamIsEmpty(stringstream *ss) {
-    return ss->data[ss->offset] == '\0';
-}
-
-void stringstreamInit(stringstream *ss, char *str) {
-    ss->data = str; 
-    ss->offset = 0;
-
-    ss->isempty = &stringstreamIsEmpty;
-}
+#include "stringstream.h"
 
 
 int getToken(struct stringstream *ss, char *dest) {
