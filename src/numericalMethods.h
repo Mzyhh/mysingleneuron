@@ -7,12 +7,6 @@ typedef struct {
 } array;
 
 typedef struct {
-    void *data;
-    size_t elemSize;
-    size_t length;
-} varray;
-
-typedef struct {
     size_t order;
     double *initial_values;
     double t0;
