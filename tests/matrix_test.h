@@ -3,6 +3,6 @@
 #include <CUnit/CUnit.h>
 #include <math.h>
 
-#include "../src/matrix.h"
+#include "matrix.h"
 
 int create_singleton_suite();

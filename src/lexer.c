@@ -7,7 +7,7 @@ tNode *__expr(stringstream *ss);
 tNode *__term(stringstream *ss);
 tNode *__factor(stringstream *ss);
 
-int isvalidVarChar(char c) {
+int isvalidVarChar(const char c) {
     return isalpha(c) || c == '_';
 }
 

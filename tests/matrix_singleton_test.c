@@ -1,4 +1,4 @@
-#include "test_matrix.h"
+#include "matrix_test.h"
 
 matrix a, b, c;
 

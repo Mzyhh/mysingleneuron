@@ -22,4 +22,6 @@ typedef struct parserToken {
     } data;
 } Token;
 
+int isvalidVarChar(const char c);
+
 #endif //__LEXER_H__

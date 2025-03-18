@@ -1,4 +1,4 @@
-#include "test_matrix.h"
+#include "matrix_test.h"
 
 extern int materrorno;
 matrix i2x2, m2x2, m2x3, zeros4x4;
