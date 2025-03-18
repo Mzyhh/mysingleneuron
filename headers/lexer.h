@@ -12,16 +12,37 @@
 #ifndef __LEXER_H__
 #define __LEXER_H__
 
-#include "tree.h"
+#include "stringstream.h"
+
+#define MAX_TOKEN_LEN 16
 
 typedef struct parserToken {
-    enum {Op, Num, Var, Open, Close} type;
-    union {
-        char varname[MAX_TOKEN_LEN];
-        double number;
-    } data;
+//    enum {Op, Num, Var, Open, Close} type;
+    char *text;
+    size_t len;
 } Token;
 
 int isvalidVarChar(const char c);
+int getToken(struct stringstream *ss, Token *dest);
+
+
+#define CREATE_LEAF(node, it)\
+    tNode *node = (tNode*)malloc(sizeof(tNode));\
+    node->item = (it);\
+    node->left = NULL;\
+    node->right = NULL;
+#define MAKE_LEAF(node, it)\
+    node->item = (it);\
+    node->left = NULL;\
+    node->right = NULL;
+
+
+typedef struct treeNode {
+    Token *item; 
+    struct treeNode* left;
+    struct treeNode* right;
+} tNode;
+
+tNode *__expr(stringstream *ss);
 
 #endif //__LEXER_H__

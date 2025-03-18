@@ -1,7 +1,7 @@
-#include "stringstream.h"
-#include "lexer.h"
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
+#include "lexer.h"
 
 tNode *__expr(stringstream *ss);
 tNode *__term(stringstream *ss);
@@ -11,37 +11,42 @@ int isvalidVarChar(const char c) {
     return isalpha(c) || c == '_';
 }
 
-int getToken(struct stringstream *ss, Token* dest) {
+int isOp(const char c) {
+    return c == '-' || c == '+' || c == '*' || c == '/';
+}
+
+int pickToken(struct stringstream *ss, Token* dest) {
     int old_offset = ss->offset;
     while (isspace(ss->data[ss->offset]) && !ss->isempty(ss)) ss->offset++;
     if(ss->isempty(ss)) {
         return 1;
     }
-    size_t start = ss->offset;
-    if (isalpha(ss->data[start])) {
-        while (isvalidVarChar(ss->data[ss->offset]) && !ss->isempty(ss)) ss->offset++;
-        size_t end = ss->offset;
-        dest->type = Var;
-        strncpy(dest->data.varname, ss->data + start, end - start);
-    } else if (isdigit(ss->data[start])) {
-        dest->type = Num;
-        dest->data.number = atof(ss->data + start);
-        while(isdigit(ss->data[ss->offset]) || ss->data[ss->offset] == '.') 
-            ss->offset++;
-         
-    } else if (ss->data[start] == '(') {
-        dest->type = Open;
-        ss->offset++;
-    } else if (ss->data[start] == ')') {
-        dest->type = Close;
-        ss->offset++;
+    size_t end = ss->offset;
+    if (isalpha(ss->data[end])) {
+        while (isvalidVarChar(ss->data[end]) && !ss->isempty(ss)) end++;
+        dest->text = ss->data + ss->offset;
+        dest->len = end - ss->offset;
+    } else if (isdigit(ss->data[end])) {
+        while(isdigit(ss->data[end]) || ss->data[end] == '.') end++;
+        dest->text = ss->data + ss->offset;
+        dest->len = end - ss->offset;
+    } else if (ss->data[end] == '(') {
+        dest->text = ss->data + ss->offset;
+        dest->len = 1;
+    } else if (ss->data[end] == ')') {
+        dest->text = ss->data + ss->offset;
+        dest->len = 1;
     } else {
-        dest->type = Op;
-        dest->data.varname[0] = ss->data[ss->offset++];
-        dest->data.varname[1] = '\0';
+        dest->text = ss->data + ss->offset;
+        dest->len = 1;
     }
-
     return EXIT_SUCCESS;
+}
+
+int getToken(struct stringstream *ss, Token* dest) {
+    int code = pickToken(ss, dest);
+    ss->offset += dest->len; 
+    return code;
 }
 
 tNode *__expr(stringstream *ss) {
@@ -49,8 +54,8 @@ tNode *__expr(stringstream *ss) {
         return NULL;
     tNode *left = __term(ss);
     Token *t = (Token*)malloc(sizeof(Token));
-    getToken(ss, t); 
-    if(t->type == Op && (t->data.varname[0]=='+'||t->data.varname[0]=='-')) {
+    int code = getToken(ss, t); 
+    if(!code && (t->text[0] == '+' || t->text[0] == '-')) {
         tNode *op = (tNode*)malloc(sizeof(tNode));
         op->item = t;
         op->left = left;
@@ -64,7 +69,7 @@ tNode *__factor(stringstream *ss) {
         return NULL;
     Token *t = (Token*)malloc(sizeof(Token));
     getToken(ss, t);
-    if (t->type ==  Open) {
+    if (t->text[0] ==  '(') {
         free(t);
         return __expr(ss);
     }
@@ -76,9 +81,10 @@ tNode *__factor(stringstream *ss) {
 tNode *__term(stringstream *ss) {
     tNode *left = __factor(ss);
     Token *t = (Token*)malloc(sizeof(Token));
-    if (t->type != Op) return left;
-    if (t->type == Op &&
-       (t->data.varname[0] == '+' || t->data.varname[0] == '-')) return left;
+    pickToken(ss, t);
+    if (!isOp(t->text[0])) return left;
+    if (isOp(t->text[0]) && (t->text[0] == '+' || t->text[0] == '-')) return left;
+    getToken(ss, t);
     tNode *right = __factor(ss);
     tNode *op = (tNode*)malloc(sizeof(tNode));
     op->item = t;

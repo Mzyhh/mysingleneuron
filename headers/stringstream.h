@@ -3,8 +3,7 @@
 #ifndef __STRINGSTREAM_H__
 #define __STRINGSTREAM_H__
 
-#define INIT_SS(name, str) struct stringstream name;\
-                      stringstreamInit(&name, str);
+#define INIT_SS(name, str) stringstreamInit(&name, str);
 
 typedef struct stringstream {
     char* data;
@@ -15,6 +14,6 @@ typedef struct stringstream {
 
 int stringstreamIsEmpty(stringstream *ss);
 
-void stringstreamInit(stringstream *ss, char *str);
+int stringstreamInit(stringstream *ss, char *str);
 
 #endif // __STRINGSTREAM_H__

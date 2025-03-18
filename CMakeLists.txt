@@ -12,12 +12,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 find_package(CUnit REQUIRED)
 
 file(GLOB_RECURSE SRC_FILES src/*.c)
-list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main.c")
-
 file(GLOB_RECURSE MATRIX_TEST_FILES tests/matrix*.c)
+file(GLOB_RECURSE TOKENIZE_TEST_FILES tests/tokenize*.c)
+list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main.c")
 
 message(STATUS "SRC_FILES: ${SRC_FILES}")
 message(STATUS "MATRIX_TEST_FILES: ${MATRIX_TEST_FILES}")
+message(STATUS "TOKENIZE_TEST_FILES: ${TOKENIZE_TEST_FILES}")
 message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
 
 add_executable(playground src/main.c ${SRC_FILES})
@@ -26,6 +27,7 @@ target_include_directories(playground PRIVATE headers)
 add_executable(matrix_test ${SRC_FILES} ${MATRIX_TEST_FILES})
 target_include_directories(matrix_test PRIVATE headers)
 target_link_libraries(matrix_test ${CUNIT_LIBRARIES})
-#add_test(NAME matrix_test COMMAND matrix_test)
-#target_compile_options(matrix_test PRIVATE "-lcunit")
-#target_link_options(matrix_test PRIVATE "-lcunit")
+
+add_executable(tokenize_test ${SRC_FILES} ${TOKENIZE_TEST_FILES})
+target_include_directories(tokenize_test PRIVATE headers)
+target_link_libraries(tokenize_test ${CUNIT_LIBRARIES})
