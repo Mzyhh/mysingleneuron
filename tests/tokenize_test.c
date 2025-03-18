@@ -23,17 +23,18 @@ TEST_FUNCT(getToken_one_symbol) {
     }
 }
 
-void test_one_number(void) {
+TEST_FUNCT(getToken_one_number) {
     stringstream ss;
     char buffer[128];
-    INIT_SS(ss, buffer);
     Token t;
-    for (int i = 1, j = 1; i < 1000000; i = i*10 + 1, j++) {
-        sprintf(buffer, "%d", i); 
+    for (int i = 1; i < 6; i++) {
+        buffer[i-1] = i + '0';
+        buffer[i] = '\0';
+        INIT_SS(ss, buffer);
         getToken(&ss, &t);
-        CU_ASSERT(t.len = j);
+        CU_ASSERT(t.len = i);
         CU_ASSERT(ss.isempty(&ss));
-        CU_ASSERT(strncmp(t.text, buffer, t.len));
+        CU_ASSERT(!strncmp(t.text, buffer, t.len));
     }
 }
 
@@ -41,11 +42,11 @@ int main() {
     if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
     }
+    CU_basic_set_mode(CU_BRM_VERBOSE);   
     CU_pSuite suite = CU_add_suite("TokenizeTestSuite", init_suite, clean_suite);
 
     ADD_SUITE_TEST(suite, getToken_one_symbol);
-
-    CU_add_test(suite, "test strings containing one number", test_one_number);
+    ADD_SUITE_TEST(suite, getToken_one_number);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
