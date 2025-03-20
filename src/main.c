@@ -3,10 +3,16 @@
 #include <stdlib.h>
 #include "lexer.h"
 
-void print_tree(tNode *root) {
-    if (root->left) print_tree(root->left);
-    printf("%.*s", (int)root->item->len, root->item->text);
-    if (root->right) print_tree(root->right);
+void infix_tree(tNode *root) {
+    if (root->left) infix_tree(root->left);
+    printf("%.*s", (int)root->item.len, root->item.text);
+    if (root->right) infix_tree(root->right);
+}
+
+void prefix_tree(tNode *root) {
+    printf("%.*s", (int)root->item.len, root->item.text);
+    if (root->left) prefix_tree(root->left);
+    if (root->right) prefix_tree(root->right);
 }
 
 int main(int argc, char *argv[]) {
@@ -15,6 +21,6 @@ int main(int argc, char *argv[]) {
     ss.offset = 0;
     ss.isempty = stringstreamIsEmpty;
     tNode* root = createSyntaxTree(&ss); 
-    print_tree(root);
+    prefix_tree(root);
     return EXIT_SUCCESS;
 }

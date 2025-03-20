@@ -16,7 +16,7 @@ TEST_FUNCT(getToken_one_symbol) {
     c[0] = '!';
     for (;c[0] <= '~'; c[0]++) {
         INIT_SS(ss, c);
-        getToken(&ss, &t);
+        t = getToken(&ss);
         CU_ASSERT(t.len == 1);
         CU_ASSERT(ss.isempty(&ss));
         CU_ASSERT(t.text[0] == c[0]);
@@ -31,7 +31,7 @@ TEST_FUNCT(getToken_one_number) {
         buffer[i-1] = i + '0';
         buffer[i] = '\0';
         INIT_SS(ss, buffer);
-        getToken(&ss, &t);
+        t = getToken(&ss);
         CU_ASSERT_EQUAL(t.len, i);
         CU_ASSERT_TRUE(ss.isempty(&ss));
         CU_ASSERT_EQUAL(strncmp(t.text, buffer, t.len), 0);
@@ -44,7 +44,7 @@ TEST_FUNCT(getToken_simple_sequence1) {
     char *str = "2+2";
     INIT_SS(ss, str);
     for (int i = 0; i < strlen(str); ++i) {
-        getToken(&ss, &t); 
+        t = getToken(&ss); 
         CU_ASSERT_EQUAL(t.len, 1);
         CU_ASSERT_EQUAL(ss.offset, i + 1);
         CU_ASSERT(!strncmp(t.text, str + i, t.len));
@@ -57,7 +57,7 @@ TEST_FUNCT(getToken_simple_sequence2) {
     char *str = "a+2+b-1/2*c+0";
     INIT_SS(ss, str);
     for (int i = 0; i < strlen(str); ++i) {
-        getToken(&ss, &t); 
+        t = getToken(&ss); 
         CU_ASSERT_EQUAL(t.len, 1);
         CU_ASSERT_EQUAL(ss.offset, i + 1);
         CU_ASSERT(!strncmp(t.text, str + i, t.len));
@@ -71,7 +71,7 @@ TEST_FUNCT(getToken_whitespaces) {
     char *str2 = "a+2/b";
     INIT_SS(ss, str);
     for (int i = 0; i < strlen(str2); ++i) {
-        getToken(&ss, &t); 
+        t = getToken(&ss); 
         CU_ASSERT_EQUAL(t.len, 1);
         CU_ASSERT(!strncmp(t.text, str2 + i, t.len));
     }
@@ -83,13 +83,13 @@ TEST_FUNCT(getToken_sequence1) {
     Token t;
     char *str = "abl+22.5";
     INIT_SS(ss, str);
-    getToken(&ss, &t); 
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 3);
     CU_ASSERT(!strncmp(t.text, "abl", t.len));
-    getToken(&ss, &t); 
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 1);
     CU_ASSERT(!strncmp(t.text, "+", t.len));
-    getToken(&ss, &t); 
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 4);
     CU_ASSERT(!strncmp(t.text, "22.5", t.len));
     CU_ASSERT(ss.isempty(&ss));
@@ -99,13 +99,13 @@ TEST_FUNCT(getToken_digit_dots) {
     stringstream ss;
     Token t;
     INIT_SS(ss, "22.3.4");
-    getToken(&ss, &t);
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 4);
     CU_ASSERT(!strncmp(t.text, "22.3", t.len));
-    getToken(&ss, &t);
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 1);
     CU_ASSERT(!strncmp(t.text, ".", t.len));
-    getToken(&ss, &t);
+    t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 1);
     CU_ASSERT(!strncmp(t.text, "4", t.len));
     CU_ASSERT(ss.isempty(&ss));

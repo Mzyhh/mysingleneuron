@@ -1,6 +1,6 @@
 /*
  * expr ::= term + expr | term - expr | term
- * term ::= factor*factor | factor/factor | factor
+ * term ::= factor*term | factor/term | factor
  * factor :: = operand | ( expr )
  * operand ::= number | var
  * var ::= letter+
@@ -17,13 +17,12 @@
 #define MAX_TOKEN_LEN 16
 
 typedef struct parserToken {
-//    enum {Op, Num, Var, Open, Close} type;
+    enum {None, Op, Num, Var, Open, Close} type;
     char *text;
     size_t len;
 } Token;
 
-int isvalidVarChar(const char c);
-int getToken(struct stringstream *ss, Token *dest);
+Token getToken(struct stringstream *ss);
 
 
 #define CREATE_LEAF(node, it)\
@@ -38,7 +37,7 @@ int getToken(struct stringstream *ss, Token *dest);
 
 
 typedef struct treeNode {
-    Token *item; 
+    Token item; 
     struct treeNode* left;
     struct treeNode* right;
 } tNode;
