@@ -13,17 +13,7 @@
 #define __LEXER_H__
 
 #include "stringstream.h"
-
-#define MAX_TOKEN_LEN 16
-
-typedef struct parserToken {
-    enum {None, Op, Num, Var, Open, Close} type;
-    char *text;
-    size_t len;
-} Token;
-
-Token getToken(struct stringstream *ss);
-
+#include "token.h"
 
 #define CREATE_LEAF(node, it)\
     tNode *node = (tNode*)malloc(sizeof(tNode));\
