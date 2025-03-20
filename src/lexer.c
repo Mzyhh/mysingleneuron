@@ -11,7 +11,8 @@ int isvalidVarChar(const char c) {
     return isalpha(c) || c == '_';
 }
 
-int isOp(const char c) {
+int isOp(Token *t) {
+    char c = t->text[0];
     return c == '-' || c == '+' || c == '*' || c == '/';
 }
 
@@ -27,7 +28,14 @@ int pickToken(struct stringstream *ss, Token* dest) {
         dest->text = ss->data + ss->offset;
         dest->len = end - ss->offset;
     } else if (isdigit(ss->data[end])) {
-        while(isdigit(ss->data[end]) || ss->data[end] == '.') end++;
+        int dotflag = 0;
+        while(isdigit(ss->data[end]) || ss->data[end] == '.') {
+            if (ss->data[end] == '.') {
+                if (dotflag == 1) break;
+                dotflag = 1;
+            }
+            end++;
+        }
         dest->text = ss->data + ss->offset;
         dest->len = end - ss->offset;
     } else if (ss->data[end] == '(') {
@@ -54,12 +62,16 @@ tNode *__expr(stringstream *ss) {
         return NULL;
     tNode *left = __term(ss);
     Token *t = (Token*)malloc(sizeof(Token));
-    int code = getToken(ss, t); 
-    if(!code && (t->text[0] == '+' || t->text[0] == '-')) {
+    if (getToken(ss, t)) {
+        free(t);
+        return left;
+    }
+    if(t->text[0] == '+' || t->text[0] == '-') {
         tNode *op = (tNode*)malloc(sizeof(tNode));
         op->item = t;
         op->left = left;
         op->right = __expr(ss);
+        return op;
     }
     return left;
 }
@@ -68,8 +80,10 @@ tNode *__factor(stringstream *ss) {
     if (ss->isempty(ss)) 
         return NULL;
     Token *t = (Token*)malloc(sizeof(Token));
-    getToken(ss, t);
-    if (t->text[0] ==  '(') {
+    if(getToken(ss, t)) {
+        free(t);
+        return NULL;
+    }    if (t->text[0] ==  '(') {
         free(t);
         return __expr(ss);
     }
@@ -81,9 +95,14 @@ tNode *__factor(stringstream *ss) {
 tNode *__term(stringstream *ss) {
     tNode *left = __factor(ss);
     Token *t = (Token*)malloc(sizeof(Token));
-    pickToken(ss, t);
-    if (!isOp(t->text[0])) return left;
-    if (isOp(t->text[0]) && (t->text[0] == '+' || t->text[0] == '-')) return left;
+    if(pickToken(ss, t) || !isOp(t)) {
+        free(t);
+        return left;
+    }
+    if (t->text[0] == '+' || t->text[0] == '-') {
+        free(t);
+        return left;
+    }
     getToken(ss, t);
     tNode *right = __factor(ss);
     tNode *op = (tNode*)malloc(sizeof(tNode));

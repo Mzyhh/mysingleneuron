@@ -43,6 +43,6 @@ typedef struct treeNode {
     struct treeNode* right;
 } tNode;
 
-tNode *__expr(stringstream *ss);
+tNode *createSyntaxTree(stringstream *ss);
 
 #endif //__LEXER_H__
