@@ -3,39 +3,17 @@
 #include "lexer.h"
 #include "parser.h"
 
-tNode *__expr(stringstream *ss);
-tNode *__term(stringstream *ss);
-tNode *__factor(stringstream *ss);
+static tNode *__expr(stringstream *ss);
+static tNode *__term(stringstream *ss);
+static tNode *__factor(stringstream *ss);
 
-static const char *EXPR_OPS[NEXPR_OPS] = {"+", "-"};
-static const char *TERM_OPS[NTERM_OPS] = {"*", "/"};
 
-int isExprOp(token t) {
-    if (t.type != Op) return 0;
-    for (int i = 0; i < NEXPR_OPS; ++i) {
-        if (!strncmp(t.text, EXPR_OPS[i], t.len)) return 1;
-    }
-    return 0;
-}
-
-int isTermOp(token t) {
-    if (t.type != Op) return 0;
-    for (int i = 0; i < NTERM_OPS; ++i) {
-        if (!strncmp(t.text, TERM_OPS[i], t.len)) return 1;
-    }
-    return 0;
-}
-
-int isOp(token t) {
-    return t.type == Op;
-}
-
-tNode *__expr(stringstream *ss) {
+static tNode *__expr(stringstream *ss) {
     if (stringstreamIsEmpty(ss)) 
         return NULL;
     tNode *left = __term(ss);
-    token t = getToken(ss);
-    if (isExprOp(t)) {
+    token t = getKnownToken(ss);
+    if (t.type == ExprOp) {
         tNode *op = (tNode*)malloc(sizeof(tNode));
         op->item = t;
         op->left = left;
@@ -45,24 +23,30 @@ tNode *__expr(stringstream *ss) {
     return left;
 }
 
-tNode *__factor(stringstream *ss) {
+static tNode *__factor(stringstream *ss) {
     if (stringstreamIsEmpty(ss)) 
         return NULL;
-    token t = getToken(ss);
+    token t = getKnownToken(ss);
     if(t.type == None) {
         return NULL;
     }
     if (t.type == Open) {
-        return __expr(ss);
+        CREATE_LEAF(result, t);
+        result->left = __expr(ss);
+        return result;
     }
     CREATE_LEAF(result, t);
     return result;
 }
 
-tNode *__term(stringstream *ss) {
+static tNode *__term(stringstream *ss) {
     tNode *left = __factor(ss);
-    token t = getToken(ss);
-    if (isTermOp(t)) {
+    token t = getKnownToken(ss);
+    if (t.type == Close) {
+        CREATE_LEAF(close, t);
+        left->left = close;
+    }
+    if (t.type == TermOp) {
         tNode *right = __term(ss);
         tNode *op = (tNode*)malloc(sizeof(tNode));
         op->item = t;
@@ -74,7 +58,7 @@ tNode *__term(stringstream *ss) {
     return left;
 }
 
-tNode *createSyntaxTree(stringstream *ss) {
+tNode *createAST(stringstream *ss) {
     tNode* root = NULL;
     if (!stringstreamIsEmpty(ss)) 
         root = __expr(ss);

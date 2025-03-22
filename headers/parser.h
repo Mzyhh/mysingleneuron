@@ -4,7 +4,7 @@
  * factor :: = operand | ( expr )
  * operand ::= number | var
  * var ::= letter+
- * letter ::= [_a-zA-Z]
+ * letter ::= [_a-zA-Z0-9]
  * number ::= 0 | digitnozero
  * digitnozero ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
  */
@@ -15,8 +15,6 @@
 #include "stringstream.h"
 #include "lexer.h"
 
-#define NEXPR_OPS 2
-#define NTERM_OPS 2
 
 #define CREATE_LEAF(node, it)\
     tNode *node = (tNode*)malloc(sizeof(tNode));\
@@ -30,6 +28,6 @@ typedef struct treeNode {
     struct treeNode* right;
 } tNode;
 
-tNode *createSyntaxTree(stringstream *ss);
+tNode *createAST(stringstream *ss);
 
 #endif //__LEXER_H__
