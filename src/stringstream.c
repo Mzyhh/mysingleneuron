@@ -8,7 +8,5 @@ int stringstreamInit(stringstream *ss, char *str) {
     ss->data = str; 
     ss->offset = 0;
 
-    ss->isempty = &stringstreamIsEmpty;
-
     return EXIT_SUCCESS;
 }

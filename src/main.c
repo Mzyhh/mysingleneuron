@@ -19,7 +19,6 @@ int main(int argc, char *argv[]) {
     stringstream ss;
     ss.data = argv[1];
     ss.offset = 0;
-    ss.isempty = stringstreamIsEmpty;
     tNode* root = createSyntaxTree(&ss); 
     prefix_tree(root);
     return EXIT_SUCCESS;

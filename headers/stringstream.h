@@ -9,7 +9,6 @@ typedef struct stringstream {
     char* data;
     size_t offset;
 
-    int (*isempty)(struct stringstream*);
 }stringstream;
 
 int stringstreamIsEmpty(stringstream *ss);

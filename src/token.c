@@ -8,31 +8,47 @@ int isvalidVarChar(const char c) {
     return isalpha(c) || c == '_';
 }
 
+Token getNumberToken(struct stringstream *ss) {
+    Token result;
+    int dotflag = 0;
+    int start = ss->offset;
+    while(isdigit(ss->data[ss->offset]) || ss->data[ss->offset] == '.') {
+        if (ss->data[ss->offset] == '.') {
+            if (dotflag == 1) break;
+            dotflag = 1;
+        }
+        ss->offset++;
+    }
+    result.text = ss->data + start;
+    result.type = Num;
+    result.len = ss->offset - start;
+    return result;
+}
+
+Token getVarToken(struct stringstream *ss) {
+    int start = ss->offset;
+    while (isvalidVarChar(ss->data[ss->offset]) && !stringstreamIsEmpty(ss))
+        ss->offset++;
+    Token result;
+    result.text = ss->data + start;
+    result.len = ss->offset - start;
+    result.type = Var;
+    return result;
+}
+
 Token getToken(struct stringstream *ss) {
     Token result = {.type = None, .text = NULL, .len = -1};
     int old_offset = ss->offset;
-    while (isspace(ss->data[ss->offset]) && !ss->isempty(ss)) ss->offset++;
-    if(ss->isempty(ss)) {
+    while (isspace(ss->data[ss->offset]) && !stringstreamIsEmpty(ss)) ss->offset++;
+    if(stringstreamIsEmpty(ss)) {
         return result;
     }
     size_t end = ss->offset;
     if (isalpha(ss->data[end])) {
-        while (isvalidVarChar(ss->data[end]) && !ss->isempty(ss)) end++;
-        result.text = ss->data + ss->offset;
-        result.len = end - ss->offset;
-        result.type = Var;
-    } else if (isdigit(ss->data[end])) {
-        int dotflag = 0;
-        while(isdigit(ss->data[end]) || ss->data[end] == '.') {
-            if (ss->data[end] == '.') {
-                if (dotflag == 1) break;
-                dotflag = 1;
-            }
-            end++;
-        }
-        result.text = ss->data + ss->offset;
-        result.len = end - ss->offset;
-        result.type = Num;
+        return getVarToken(ss);
+    } 
+    if (isdigit(ss->data[end])) {
+        return getNumberToken(ss);
     } else if (ss->data[end] == '(') {
         result.text = ss->data + ss->offset;
         result.len = 1;
