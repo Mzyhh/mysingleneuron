@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "lexer.h"
+#include "parser.h"
 
 void infix_tree(tNode *root) {
     if (root->left) infix_tree(root->left);

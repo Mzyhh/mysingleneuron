@@ -1,82 +1,73 @@
-#include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "lexer.h"
-#include "token.h"
+#include "stringstream.h"
 
-tNode *__expr(stringstream *ss);
-tNode *__term(stringstream *ss);
-tNode *__factor(stringstream *ss);
 
-static const char *EXPR_OPS[NEXPR_OPS] = {"+", "-"};
-static const char *TERM_OPS[NTERM_OPS] = {"*", "/"};
-
-int isExprOp(Token t) {
-    if (t.type != Op) return 0;
-    for (int i = 0; i < NEXPR_OPS; ++i) {
-        if (!strncmp(t.text, EXPR_OPS[i], t.len)) return 1;
-    }
-    return 0;
+int isvalidVarChar(const char c) {
+    return isalpha(c) || c == '_';
 }
 
-int isTermOp(Token t) {
-    if (t.type != Op) return 0;
-    for (int i = 0; i < NTERM_OPS; ++i) {
-        if (!strncmp(t.text, TERM_OPS[i], t.len)) return 1;
+token getNumberToken(struct stringstream *ss) {
+    token result;
+    int dotflag = 0;
+    int start = ss->offset;
+    while(isdigit(ss->data[ss->offset]) || ss->data[ss->offset] == '.') {
+        if (ss->data[ss->offset] == '.') {
+            if (dotflag == 1) break;
+            dotflag = 1;
+        }
+        ss->offset++;
     }
-    return 0;
-}
-
-int isOp(Token t) {
-    return t.type == Op;
-}
-
-tNode *__expr(stringstream *ss) {
-    if (stringstreamIsEmpty(ss)) 
-        return NULL;
-    tNode *left = __term(ss);
-    Token t = getToken(ss);
-    if (isExprOp(t)) {
-        tNode *op = (tNode*)malloc(sizeof(tNode));
-        op->item = t;
-        op->left = left;
-        op->right = __expr(ss);
-        return op;
-    }
-    return left;
-}
-
-tNode *__factor(stringstream *ss) {
-    if (stringstreamIsEmpty(ss)) 
-        return NULL;
-    Token t = getToken(ss);
-    if(t.type == None) {
-        return NULL;
-    }
-    if (t.type == Open) {
-        return __expr(ss);
-    }
-    CREATE_LEAF(result, t);
+    result.text = ss->data + start;
+    result.type = Num;
+    result.len = ss->offset - start;
     return result;
 }
 
-tNode *__term(stringstream *ss) {
-    tNode *left = __factor(ss);
-    Token t = getToken(ss);
-    if (isTermOp(t)) {
-        tNode *right = __term(ss);
-        tNode *op = (tNode*)malloc(sizeof(tNode));
-        op->item = t;
-        op->left = left;
-        op->right = right;
-        return op;
-    }
-    backToken(ss, t);
-    return left;
+token getVarToken(struct stringstream *ss) {
+    int start = ss->offset;
+    while (isvalidVarChar(ss->data[ss->offset]) && !stringstreamIsEmpty(ss))
+        ss->offset++;
+    token result;
+    result.text = ss->data + start;
+    result.len = ss->offset - start;
+    result.type = Var;
+    return result;
 }
 
-tNode *createSyntaxTree(stringstream *ss) {
-    tNode* root = NULL;
-    if (!stringstreamIsEmpty(ss)) 
-        root = __expr(ss);
-    return root;
+token getToken(struct stringstream *ss) {
+    token result = {.type = None, .text = NULL, .len = -1};
+    int old_offset = ss->offset;
+    while (isspace(ss->data[ss->offset]) && !stringstreamIsEmpty(ss)) ss->offset++;
+    if(stringstreamIsEmpty(ss)) {
+        return result;
+    }
+    size_t end = ss->offset;
+    if (isalpha(ss->data[end])) {
+        return getVarToken(ss);
+    } 
+    if (isdigit(ss->data[end])) {
+        return getNumberToken(ss);
+    } else if (ss->data[end] == '(') {
+        result.text = ss->data + ss->offset;
+        result.len = 1;
+        result.type = Open;
+    } else if (ss->data[end] == ')') {
+        result.text = ss->data + ss->offset;
+        result.len = 1;
+        result.type = Close;
+    } else {
+        result.text = ss->data + ss->offset;
+        result.len = 1;
+        result.type = Op;
+    }
+    ss->offset += result.len;
+    return result;
+}
+
+int backToken(struct stringstream *ss, token t) {
+    if (t.text + t.len != ss->data + ss->offset) return 1; // Token not from this ss
+    ss->offset -= t.len;
+    return 0;
 }

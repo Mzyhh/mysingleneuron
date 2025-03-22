@@ -11,7 +11,7 @@ int clean_suite(void) {
 
 TEST_FUNCT(getToken_one_symbol) {
     stringstream ss;
-    Token t;
+    token t;
     char c[1];
     c[0] = '!';
     for (;c[0] <= '~'; c[0]++) {
@@ -26,7 +26,7 @@ TEST_FUNCT(getToken_one_symbol) {
 TEST_FUNCT(getToken_one_number) {
     stringstream ss;
     char buffer[128];
-    Token t;
+    token t;
     for (int i = 1; i < 6; i++) {
         buffer[i-1] = i + '0';
         buffer[i] = '\0';
@@ -40,7 +40,7 @@ TEST_FUNCT(getToken_one_number) {
 
 TEST_FUNCT(getToken_simple_sequence1) {
     stringstream ss;
-    Token t;
+    token t;
     char *str = "2+2";
     INIT_SS(ss, str);
     for (int i = 0; i < strlen(str); ++i) {
@@ -53,7 +53,7 @@ TEST_FUNCT(getToken_simple_sequence1) {
 
 TEST_FUNCT(getToken_simple_sequence2) {
     stringstream ss;
-    Token t;
+    token t;
     char *str = "a+2+b-1/2*c+0";
     INIT_SS(ss, str);
     for (int i = 0; i < strlen(str); ++i) {
@@ -66,7 +66,7 @@ TEST_FUNCT(getToken_simple_sequence2) {
 
 TEST_FUNCT(getToken_whitespaces) {
     stringstream ss;
-    Token t;
+    token t;
     char *str = "   a   +   2  /b";
     char *str2 = "a+2/b";
     INIT_SS(ss, str);
@@ -80,7 +80,7 @@ TEST_FUNCT(getToken_whitespaces) {
 
 TEST_FUNCT(getToken_sequence1) {
     stringstream ss;
-    Token t;
+    token t;
     char *str = "abl+22.5";
     INIT_SS(ss, str);
     t = getToken(&ss); 
@@ -97,7 +97,7 @@ TEST_FUNCT(getToken_sequence1) {
 
 TEST_FUNCT(getToken_digit_dots) {
     stringstream ss;
-    Token t;
+    token t;
     INIT_SS(ss, "22.3.4");
     t = getToken(&ss); 
     CU_ASSERT_EQUAL(t.len, 4);
