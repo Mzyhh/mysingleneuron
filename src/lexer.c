@@ -7,27 +7,40 @@
 
 static const char EXPR_OPS[] = "+-";
 static const char TERM_OPS[] = "*/";
+static const char FACTOR_OP = '^'; 
+static const char *CONSTANTS[] = {"e", "pi", "i"};
 
-int isExprOp(char c) {
+static int isExprOp(char c) {
     for (int i = 0; EXPR_OPS[i] != '\0'; ++i) {
         if (c == EXPR_OPS[i]) return 1;
     }
     return 0;
 }
 
-int isTermOp(char c) {
+static int isTermOp(char c) {
     for (int i = 0; TERM_OPS[i] != '\0'; ++i) {
         if (c == TERM_OPS[i]) return 1;
     }
     return 0;
 }
 
-int isOp(char c) {
-    return isExprOp(c) || isTermOp(c);
+static int isFactorOp(char c) {
+    return c == FACTOR_OP;
 }
 
-int isvalidVarChar(const char c) {
+static int isOp(char c) {
+    return isExprOp(c) || isTermOp(c) || isFactorOp(c);
+}
+
+static int isvalidVarChar(const char c) {
     return isalpha(c) || c == '_' || isdigit(c);
+}
+
+static int isConstant(char *str, size_t len) {
+    for (int i = 0; i < NCONSTANTS; ++i) {
+        if (!strncmp(str, CONSTANTS[i], len)) return 1;
+    }
+    return 0;
 }
 
 token getNumberToken(struct stringstream *ss) {
@@ -47,14 +60,15 @@ token getNumberToken(struct stringstream *ss) {
     return result;
 }
 
-token getVarToken(struct stringstream *ss) {
+
+token getVarConstantToken(struct stringstream *ss) {
     int start = ss->offset;
     while (isvalidVarChar(ss->data[ss->offset]) && !stringstreamIsEmpty(ss))
         ss->offset++;
     token result;
     result.text = ss->data + start;
     result.len = ss->offset - start;
-    result.type = Var;
+    result.type = isConstant(result.text, result.len) ? Constant : Var;
     return result;
 }
 
@@ -67,7 +81,7 @@ token getToken(struct stringstream *ss) {
     }
     size_t end = ss->offset;
     if (isalpha(ss->data[end])) {
-        return getVarToken(ss);
+        return getVarConstantToken(ss);
     } 
     if (isdigit(ss->data[end])) {
         return getNumberToken(ss);
@@ -82,6 +96,7 @@ token getToken(struct stringstream *ss) {
     } else if (isOp(ss->data[end])) {
         if (isExprOp(ss->data[end])) result.type = ExprOp;
         if (isTermOp(ss->data[end])) result.type = TermOp;
+        if (isFactorOp(ss->data[end])) result.type = FactorOp;
         result.len = 1;
         result.text = ss->data + ss->offset;
     } else {

@@ -1,12 +1,14 @@
 /*
- * expr ::= term + expr | term - expr | term
- * term ::= factor*term | factor/term | factor
- * factor :: = operand | ( expr )
- * operand ::= number | var
- * var ::= letter+
- * letter ::= [_a-zA-Z0-9]
- * number ::= 0 | digitnozero
- * digitnozero ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+ * <expr> ::= <term> + <expr> | <term> - <expr> | <term>
+ * <term> ::= <factor>*<term> | <factor>/<term> | <factor>
+ * <factor> ::= <primary> ^ <factor> | <primary>
+ * <primary> :: = <operand> | ( <expr> )
+ * <operand> ::= <number> | <var> | <constant>
+ * <constant> ::= e | pi | i
+ * <var> ::= <letter>[<letter><digit>]* (except for <constant>)
+ * <letter> ::= [_a-zA-Z]
+ * <number> ::= <digit>+(\.<digit>+)?
+ * <digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
  */
 
 #ifndef __LEXER_H__

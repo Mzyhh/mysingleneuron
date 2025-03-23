@@ -6,9 +6,13 @@
 
 #define NEXPR_OPS 2
 #define NTERM_OPS 2
+#define NCONSTANTS 3
 
 typedef struct parserToken {
-    enum {None, ExprOp, TermOp, Num, Var, Open, Close, Unknown} type;
+    enum {None, Unknown, 
+        ExprOp, TermOp, FactorOp,
+        Num, Var, Constant,
+        Open, Close} type;
     char *text;
     size_t len;
 } token;
